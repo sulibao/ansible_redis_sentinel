@@ -1,9 +1,9 @@
-- name: install docker for other_nodes
-  hosts: other_nodes
+- name: install docker for redis slaves
+  hosts: redis_slave
   roles: 
     - docker
 
-- name: install docker-compose for other_nodes
-  hosts: other_nodes
+- name: install docker-compose for redis slaves
+  hosts: redis_slave
   roles:
     - docker-compose

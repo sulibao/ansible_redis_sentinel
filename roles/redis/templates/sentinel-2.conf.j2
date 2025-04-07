@@ -1,0 +1,7 @@
+port {{ redis_sentinel_port }}
+protected-mode no
+sentinel monitor mymaster {{ groups['redis_master'][0] }} 6379 2
+sentinel auth-pass mymaster {{ redis_pass }}
+sentinel down-after-milliseconds mymaster 5000
+sentinel parallel-syncs mymaster 1
+sentinel failover-timeout mymaster 3000

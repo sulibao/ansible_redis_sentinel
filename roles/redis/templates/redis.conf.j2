@@ -1,0 +1,7 @@
+daemonize no
+port 6379
+protected-mode no
+bind 0.0.0.0
+requirepass {{ redis_pass }}
+masterauth {{ redis_pass }}
+slave-read-only yes

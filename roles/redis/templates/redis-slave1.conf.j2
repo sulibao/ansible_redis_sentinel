@@ -1,0 +1,8 @@
+daemonize no
+port 6379
+protected-mode no
+masterauth {{ redis_pass }}
+slave-read-only yes
+bind 0.0.0.0
+requirepass {{ redis_pass }}
+slaveof {{ groups['redis_master'][0] }} 6379

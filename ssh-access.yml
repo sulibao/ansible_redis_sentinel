@@ -1,4 +1,4 @@
-- hosts: ansible_cluster
+- hosts: redis
   tasks:
   - name: known_hosts file is created if it does not exist
     shell:
@@ -11,7 +11,7 @@
       - ansible_facts['distribution'] == "CentOS"
 
   - name: Run ssh-keyscan locally
-    command: "ssh-keyscan -f ~/.ssh/id_rsa_ansible.pub   {{ groups.all | difference(['localhost']) | join(' ') }}"
+    command: "ssh-keyscan -f ~/.ssh/id_rsa_ansible_redis.pub   {{ groups.all | difference(['localhost']) | join(' ') }}"
     delegate_to: localhost
     register: new_host
     ignore_errors: yes
@@ -31,5 +31,5 @@
     authorized_key:
       user: root
       state: present
-      key: "{{ lookup('file', '~/.ssh/id_rsa_ansible.pub') }}"
+      key: "{{ lookup('file', '~/.ssh/id_rsa_ansible_redis.pub') }}"
   - ping:

@@ -1,0 +1,30 @@
+services:
+  redis-master:
+    image: "{{ image_redis }}"
+    network_mode: host
+    restart: always
+    privileged: true
+    container_name: redis-master
+    command:
+      - /bin/sh
+      - -c
+      - redis-server /etc/redis.conf
+    volumes:
+      - redis-data:/data
+      - ./redis.conf:/etc/redis.conf
+      - /etc/localtime:/etc/localtime:ro
+  redis-sentinel:
+    image: "{{ image_redis }}"
+    network_mode: host
+    restart: always
+    privileged: true
+    container_name: redis-sentinel
+    command:
+      - /bin/sh
+      - -c
+      - redis-server /etc/redis/sentinel.conf --sentinel
+    volumes:
+      - ./sentinel-1.conf:/etc/redis/sentinel.conf
+      - /etc/localtime:/etc/localtime:ro
+volumes:
+  redis-data:

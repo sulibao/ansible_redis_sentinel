@@ -1,1 +1,5 @@
 docker_data_dir: /app/docker_data
+data_dir: /app
+redis_sentinel_port: 26379
+redis_pass: "sulibao"
+image_redis: "registry.cn-chengdu.aliyuncs.com/su03/redis:7.2.7"

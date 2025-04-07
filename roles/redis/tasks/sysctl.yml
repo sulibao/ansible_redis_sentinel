@@ -1,0 +1,13 @@
+- name: add vm.overcommit_memory config
+  lineinfile:
+    path: /etc/sysctl.conf
+    line: "vm.overcommit_memory = 1"
+    state: present
+- name: add net.core.somaxconn config
+  lineinfile:
+    path: /etc/sysctl.conf
+    line: "net.core.somaxconn = 511"
+    state: present
+
+- name: refresh sysctl.conf
+  shell: "sysctl -p"

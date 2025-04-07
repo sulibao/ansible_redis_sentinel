@@ -1,15 +1,15 @@
-[ansible]   
+[redis_master]   #The address of the initial redis-master
 192.168.2.190
-[other_node01]  
+[redis_slave1]   #The address of the initial redis-slave1
 192.168.2.191
-[other_node02] 
+[redis_slave2]   #The address of the initial redis-slave2
 192.168.2.192
 
-[other_nodes:children]
-other_node01
-other_node02
+[redis_slave:children]
+redis_slave1
+redis_slave2
 
-[ansible_cluster:children]
-ansible
-other_node01
-other_node02
+[redis:children]
+redis_master
+redis_slave1
+redis_slave2

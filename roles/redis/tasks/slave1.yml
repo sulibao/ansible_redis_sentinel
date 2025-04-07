@@ -1,0 +1,20 @@
+- name: ensure dir for redis
+  file:
+    path: "{{ data_dir }}/redis/"
+    state: directory
+    mode: "0755" 
+
+- name: template file
+  template:
+    src: "{{ item }}"
+    dest: "{{ data_dir }}/redis/{{ item | splitext | first }}"
+    mode: "0755"
+  with_items:
+    - docker-compose-slave1.yml.j2
+    - redis-slave1.conf.j2
+    - sentinel-2.conf.j2
+
+- name: install redis slave1
+  shell: "docker-compose -f docker-compose-slave1.yml up -d"
+  args:
+    chdir: "{{ data_dir }}/redis"
