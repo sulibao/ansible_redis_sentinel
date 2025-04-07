@@ -1,0 +1,19 @@
+- name: copy file on docker-compose
+  copy:
+    src: "{{ item }}"
+    dest: /usr/local/bin/docker-compose
+    remote_src: false
+    mode: 0755
+  with_items:
+    - "x86/docker-compose-linux-x86_64"
+  when: "ansible_architecture == 'x86_64'"
+
+- name: copy file on docker-compose
+  copy:
+    src: "{{ item }}"
+    dest: /usr/local/bin/docker-compose
+    remote_src: false
+    mode: 0755
+  with_items:
+    - "arm64/docker-compose-linux-aarch64"
+  when: "ansible_architecture == 'aarch64'"

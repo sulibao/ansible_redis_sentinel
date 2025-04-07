@@ -1,0 +1,61 @@
+- name:  stop firewalld
+  command:
+    "systemctl stop firewalld"
+  ignore_errors: yes
+
+- name: Set SELinux in permissive mode (effectively disabling it)
+  shell:
+    "{{ item }}"
+  ignore_errors: yes
+  with_items:
+  - setenforce 0
+  - sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config
+  - swapoff -a
+  - sed -i 's/.*swap.*/#&/' /etc/fstab
+
+- name: ensure dir for daemon.json
+  file:
+    path: /etc/docker
+    state: directory
+    mode: "0755"
+
+- name: unarchive file
+  unarchive:
+    src: "{{ item }}"
+    dest: /usr/bin
+    remote_src: false
+    extra_opts:
+      - --strip-components=1
+  with_items:
+    - "x86/docker-27.2.0.tgz"
+  when: "ansible_architecture == 'x86_64'"
+
+- name: unarchive file
+  unarchive:
+    src: "{{ item }}"
+    dest: /usr/bin
+    remote_src: false
+    extra_opts:
+      - --strip-components=1
+  with_items:
+    - "arm64/docker-27.2.0.tgz"
+  when: "ansible_architecture == 'aarch64'"
+
+- name: template file
+  template:
+    src: "{{ item }}"
+    dest: /usr/lib/systemd/system/docker.service
+  with_items:
+    - docker.service.j2 
+
+- name: template file daemon
+  template:
+    src: "{{ item }}"
+    dest: /etc/docker/daemon.json
+  with_items:
+    - daemon.json.j2 
+
+- name: restart docker
+  service:
+    name: docker.service
+    state: started

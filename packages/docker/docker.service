@@ -1,0 +1,25 @@
+[Unit]
+Description=Docker Application Container Engine
+Documentation=https://docs.docker.com
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=notify
+Environment="PATH=/bin:/sbin:/usr/bin:/usr/sbin"
+EnvironmentFile=-/etc/sysconfig/docker
+EnvironmentFile=-/etc/sysconfig/docker-storage
+EnvironmentFile=-/etc/sysconfig/docker-network
+Environment=GOTRACEBACK=crash
+ExecStart=/usr/bin/dockerd -H unix://var/run/docker.sock -H tcp://0.0.0.0:2375
+ExecReload=/bin/kill -s HUP $MAINPID
+LimitNOFILE=1048576
+LimitNPROC=1048576
+LimitCORE=infinity
+# set delegate yes so that systemd does not reset the cgroups of docker containers
+Delegate=yes
+# kill only the docker process, not all processes in the cgroup
+KillMode=process
+
+[Install]
+WantedBy=multi-user.target

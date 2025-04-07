@@ -1,0 +1,14 @@
+{
+  "registry-mirrors": [
+    "http://hub-mirror.c.163.com"
+  ],
+  "data-root": "{{ docker_data_dir }}",
+  "max-concurrent-downloads": 10,
+  "live-restore": true,
+  "log-level": "warn",
+  "log-opts": {
+    "max-size": "1000m",
+    "max-file": "1"
+  },
+  "exec-opts": ["native.cgroupdriver=systemd"]
+}

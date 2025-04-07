@@ -1,0 +1,15 @@
+[ansible]   
+192.168.2.190
+[other_node01]  
+192.168.2.191
+[other_node02] 
+192.168.2.192
+
+[other_nodes:children]
+other_node01
+other_node02
+
+[ansible_cluster:children]
+ansible
+other_node01
+other_node02

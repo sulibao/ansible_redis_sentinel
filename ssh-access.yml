@@ -1,0 +1,35 @@
+- hosts: ansible_cluster
+  tasks:
+  - name: known_hosts file is created if it does not exist
+    shell:
+      "[ ! -d \"~/.ssh/know_host\" ] && mkdir -p ~/.ssh && touch ~/.ssh/known_hosts"
+
+  - name: Delete the existing records for ~/.ssh/known_hosts
+    command: "sed -i '/{{ item }}/d' ~/.ssh/known_hosts"
+    loop: "{{ groups.all | difference(['localhost']) }}"
+    when:
+      - ansible_facts['distribution'] == "CentOS"
+
+  - name: Run ssh-keyscan locally
+    command: "ssh-keyscan -f ~/.ssh/id_rsa_ansible.pub   {{ groups.all | difference(['localhost']) | join(' ') }}"
+    delegate_to: localhost
+    register: new_host
+    ignore_errors: yes
+
+  - name: Enter the fingerprint of the target host into ~/.ssh/known_hosts
+    lineinfile:
+      dest: ~/.ssh/known_hosts
+      line: "{{ item }}"
+    loop: "{{ new_host.stdout_lines }}"
+    delegate_to: localhost
+
+- hosts: "{{ groups.all | difference(['localhost']) }}"
+  gather_facts: no
+  remote_user: root
+  tasks:
+  - name: Transfer ssh public key to target host
+    authorized_key:
+      user: root
+      state: present
+      key: "{{ lookup('file', '~/.ssh/id_rsa_ansible.pub') }}"
+  - ping:
