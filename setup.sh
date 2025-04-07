@@ -8,9 +8,11 @@ export ansible_log_dir="$path/log"
 export ansible_image_url_x86="registry.cn-chengdu.aliyuncs.com/su03/ansible:latest"
 export ansible_image_url_arm="registry.cn-chengdu.aliyuncs.com/su03/ansible-arm:latest"
 export docker_package_url_x86="https://su-package.oss-cn-chengdu.aliyuncs.com/docker/amd/docker-27.2.0.tgz"
-export docker_package_url_arm="https://su-package.oss-cn-chengdu.aliyuncs.com/docker/arm/docker-27.2.0.tgz"
+export docker_package_url_arm="https://su-package.oss-cn-chengdu.aliyuncs.com/docker/arm64/docker-27.2.0.tgz"
 export target_file_x86="$path/packages/docker/x86/docker-27.2.0.tgz"
-export target_file_arm="$path/packages/docker/arm/docker-27.2.0.tgz"
+export target_file_arm="$path/packages/docker/arm64/docker-27.2.0.tgz"
+export target_docker_filedir_x86="$path/roles/docker/files/x86/docker-27.2.0.tgz"
+export target_docker_filedir_arm="$path/roles/docker/files/arm64/docker-27.2.0.tgz"
 export ssh_pass="sulibao"
 export os_arch=$(uname -m)
 
@@ -29,7 +31,8 @@ function get_arch_package() {
     if [ -f "$target_file_x86" ]; then
       echo "The file $target_file_x86 already exists, skip download."
     else
-      mkdir -p "$(dirname "$target_file_x86")"
+      mkdir -p "$(dirname "$target_file_x86")" && \
+      mkdir -p "$(dirname "$target_docker_filedir_x86")"
       curl -C - -o "$target_file_x86" "$docker_package_url_x86"
       if [ $? -eq 0 ]; then
         echo "The file downloaded successfully."
@@ -44,7 +47,8 @@ function get_arch_package() {
     if [ -f "$target_file_arm" ]; then
       echo "The file $target_file_arm already exists, skip download."
     else
-      mkdir -p "$(dirname "$target_file_arm")"
+      mkdir -p "$(dirname "$target_file_arm")" && \
+      mkdir -p "$(dirname "$target_docker_filedir_arm")"
       curl -C - -o "$target_file_arm" "$docker_package_url_arm"
       if [ $? -eq 0 ]; then
         echo "The file downloaded successfully."
@@ -104,11 +108,11 @@ function install_docker() {
   echo "Installing docker."
   if [[ "$ARCH" == "x86" ]]
   then
-    export DOCKER_OFFLINE_PACKAGE=$path/packages/docker/x86/docker-27.2.0.tgz && \
-    cp -v -f $target_file_x86 $path/roles/docker/files/x86/docker-27.2.0.tgz
+    export DOCKER_OFFLINE_PACKAGE=$target_file_x86 && \
+    cp -v -f $target_file_x86 $target_docker_filedir_x86
   else
-    export DOCKER_OFFLINE_PACKAGE=$path/packages/docker/arm64/docker-27.2.0.tgz && \
-    cp -v -f $target_file_x86 $path/roles/docker/files/arm64/docker-27.2.0.tgz
+    export DOCKER_OFFLINE_PACKAGE=$target_file_arm && \
+    cp -v -f $target_file_arm $target_docker_filedir_arm
   fi
   tar axvf $DOCKER_OFFLINE_PACKAGE -C /usr/bin/ --strip-components=1
   cp -v -f $path/packages/docker/docker.service /usr/lib/systemd/system/
@@ -205,7 +209,6 @@ function install_redis() {
 }
 
 get_arch_package
-check_arch
 check_docker
 check_docker_compose
 pull_ansible_image
