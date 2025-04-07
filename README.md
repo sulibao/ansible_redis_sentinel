@@ -43,6 +43,14 @@ redis_slave1
 redis_slave2
 ```
 
+## Modify the setup.sh installation file
+
+```sh
+
+export ssh_pass="sulibao"  #Password of the server root user
+
+```
+
 # 4.Installation
 
 ```sh
