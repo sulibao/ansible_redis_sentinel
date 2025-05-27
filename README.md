@@ -10,7 +10,7 @@
 
 # 2.大致架构逻辑
 
-![](E:\github-desktop\ansible_redis_sentinel\.image\arch.png)
+![](https://i-blog.csdnimg.cn/direct/5046d57775684d5d8a9b6e92e3e6afa6.png)
 
 # 3.安装前
 
