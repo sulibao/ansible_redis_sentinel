@@ -2,11 +2,15 @@
 本文解释了如何使用ansible+docker-compose为三台机器快速部署一个单主、双从、三哨兵的redis集群。
 # 1.示例服务器列表
 
-![img](https://i-blog.csdnimg.cn/direct/7d22a7a3ef7d4e4a9ed3bc100541db73.png)
+| IP                     | 用途       |
+| ---------------------- | ---------- |
+| 192.168.2.190（test1） | 初始master |
+| 192.168.2.191（test2） | 初始slave1 |
+| 192.168.2.192（test3） | 初始slave2 |
 
-# 2.General architecture logic
+# 2.大致架构逻辑
 
-![img](https://i-blog.csdnimg.cn/direct/5046d57775684d5d8a9b6e92e3e6afa6.png)
+![](E:\github-desktop\ansible_redis_sentinel\.image\arch.png)
 
 # 3.安装前
 
